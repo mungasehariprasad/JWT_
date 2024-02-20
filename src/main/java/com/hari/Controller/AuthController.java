@@ -1,8 +1,12 @@
-package com.hari.Config;
+package com.hari.Controller;
 
+import com.hari.Entities.User;
 import com.hari.Helper.JWThelper;
 import com.hari.Model.JwtRequest;
 import com.hari.Model.JwtResponse;
+
+import com.hari.Service.UserService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +30,8 @@ public class AuthController {
 
     @Autowired
     private JWThelper helper;
+    @Autowired
+    private UserService userService;
 
     private Logger logger = LoggerFactory.getLogger(AuthController.class);
 
@@ -60,4 +66,8 @@ public class AuthController {
         return "Credentials Invalid !!";
     }
 
+    @PostMapping("/create-user")
+    public User createUser(@RequestBody User user) {
+        return userService.creatUser(user);
+    }
 }

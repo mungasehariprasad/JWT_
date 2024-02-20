@@ -1,6 +1,6 @@
 package com.hari.Controller;
 
-import com.hari.Model.User;
+import com.hari.Entities.User;
 import com.hari.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
