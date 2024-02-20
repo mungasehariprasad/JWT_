@@ -1,10 +1,12 @@
 package com.hari.Controller;
 
+import com.hari.Entities.RefreshToken;
 import com.hari.Entities.User;
 import com.hari.Helper.JWThelper;
 import com.hari.Model.JwtRequest;
 import com.hari.Model.JwtResponse;
-
+import com.hari.Model.RefreshTokenRequest;
+import com.hari.Service.RefreshTokenService;
 import com.hari.Service.UserService;
 
 import org.slf4j.Logger;
@@ -29,6 +31,9 @@ public class AuthController {
     private AuthenticationManager manager;
 
     @Autowired
+    private RefreshTokenService refreshTokenService;
+
+    @Autowired
     private JWThelper helper;
     @Autowired
     private UserService userService;
@@ -42,9 +47,11 @@ public class AuthController {
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(request.getEmail());
         String token = this.helper.generateToken(userDetails);
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getUsername());
 
         JwtResponse response = JwtResponse.builder()
                 .jwtToken(token)
+                .refreshToken(refreshToken.getRefreshToken())
                 .username(userDetails.getUsername()).build();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -58,6 +65,18 @@ public class AuthController {
         } catch (BadCredentialsException e) {
             throw new BadCredentialsException(" Invalid Username or Password  !!");
         }
+
+    }
+
+    @PostMapping("/refresh")
+    public JwtResponse refreshJwtToken(@RequestBody RefreshTokenRequest request) {
+        RefreshToken refreshToken = refreshTokenService.verifyRefreshToken(request.getRefreshToken());
+        User user = refreshToken.getUser();
+        String token = this.helper.generateToken(user);
+        return JwtResponse.builder().refreshToken(refreshToken.getRefreshToken())
+                .jwtToken(token)
+                .username(user.getEmail())
+                .build();
 
     }
 

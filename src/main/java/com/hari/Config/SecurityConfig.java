@@ -34,7 +34,7 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
                 .authorizeRequests().requestMatchers("/home/**").authenticated().requestMatchers("/auth/login")
                 .permitAll().requestMatchers("/auth/create-user")
-                .permitAll()
+                .permitAll().requestMatchers("/auth/refresh").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and().exceptionHandling(ex -> ex.authenticationEntryPoint(point))
